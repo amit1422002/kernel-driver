@@ -40,6 +40,14 @@ jobs:
           make LLVM=1 ARCH=arm64 olddefconfig
           make LLVM=1 ARCH=arm64 modules_prepare -j"$(nproc)"
 
+      # POCO X6 Pro running kernel GKI build id ab13792638 (ci 13792638)
+      - name: Use phone-matching Module.symvers
+        run: |
+          curl -fL -o vmlinux.symvers \
+            "https://ci.android.com/builds/submitted/13792638/kernel_aarch64/latest/vmlinux.symvers"
+          wc -c vmlinux.symvers
+          cp vmlinux.symvers common/Module.symvers
+
       - name: Build akd.ko
         run: |
           make LLVM=1 ARCH=arm64 -C common M="$GITHUB_WORKSPACE/kernel" modules -j"$(nproc)"
