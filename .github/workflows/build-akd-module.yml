@@ -25,10 +25,15 @@ jobs:
             build-essential bc bison flex libssl-dev libelf-dev \
             git python3 clang lld llvm
 
-      - name: Shallow clone GKI common (android14-6.1)
+      # POCO X6 Pro (duchamp): 6.1.138-android14-11-g44bda9e8f6e9-ab13792638
+      - name: Clone GKI common at phone-matching commit
         run: |
-          git clone --depth 1 --branch android14-6.1 \
+          git clone --filter=blob:none --no-checkout \
             https://android.googlesource.com/kernel/common common
+          cd common
+          git fetch --depth 1 origin g44bda9e8f6e9
+          git checkout g44bda9e8f6e9
+          head -5 Makefile
 
       - name: Prepare kernel headers (modules_prepare)
         working-directory: common
