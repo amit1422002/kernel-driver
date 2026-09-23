@@ -3,6 +3,11 @@ name: Build akd.ko (GKI 6.1)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -40,10 +45,17 @@ jobs:
           file kernel/akd.ko
           strings kernel/akd.ko | grep -m1 vermagic || true
 
-      - name: Upload akd.ko
+      - name: Upload akd.ko artifact
         uses: actions/upload-artifact@v4
         with:
           name: akd-ko-arm64
-          path: |
-            kernel/akd.ko
-            kernel/*.mod.c
+          path: kernel/akd.ko
+
+      - name: Publish akd.ko to Releases (public download)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: akd-${{ github.run_number }}
+          name: akd.ko build ${{ github.run_number }}
+          files: kernel/akd.ko
+          make_latest: true
+          generate_release_notes: true
