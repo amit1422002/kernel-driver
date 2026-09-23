@@ -18,12 +18,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install build deps
+      - name: Install build deps + Android clang 17 (matches phone)
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential bc bison flex libssl-dev libelf-dev \
-            git python3 clang lld llvm
+            git python3 curl xz-utils
+          git clone --depth 1 \
+            https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r487747c.git \
+            /tmp/clang-r487747c
+          echo "CLANG=/tmp/clang-r487747c/bin/clang" >> "$GITHUB_ENV"
+          echo "PATH=/tmp/clang-r487747c/bin:$PATH" >> "$GITHUB_ENV"
+          clang --version | head -1
 
       # POCO X6 Pro: Linux 6.1.138 on android14-11 (tag android14-6.1.138_r00)
       - name: Clone GKI common (6.1.138)
