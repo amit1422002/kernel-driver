@@ -1,0 +1,15 @@
+*.o
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+.*.cmd
+*.a
+*.order
+Module.symvers
+modules.order
+.tmp_versions/
+.cache.mk
+akdctl
+*.ko.unsigned
+*.ko.stripped

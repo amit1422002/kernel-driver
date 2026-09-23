@@ -1,0 +1,9 @@
+config AKD
+	tristate "Android Kernel Driver (akd character device)"
+	depends on MISC_FILESYSTEMS || MISC_DEVICES
+	default n
+	help
+	  A small misc character device at /dev/akd for Android
+	  kernel bring-up and userspace testing.
+
+	  Choose M to build as a loadable module, or Y to built-in.

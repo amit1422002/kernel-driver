@@ -1,0 +1,49 @@
+# Fast out-of-tree build (~10–20 min). No full Bazel boot image.
+name: Build akd.ko (GKI 6.1)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential bc bison flex libssl-dev libelf-dev \
+            git python3 clang lld llvm
+
+      - name: Shallow clone GKI common (android14-6.1)
+        run: |
+          git clone --depth 1 --branch android14-6.1 \
+            https://android.googlesource.com/kernel/common common
+
+      - name: Prepare kernel headers (modules_prepare)
+        working-directory: common
+        run: |
+          make LLVM=1 ARCH=arm64 gki_defconfig
+          scripts/config --set-str LOCALVERSION "-android14-11-maybe-dirty" || true
+          make LLVM=1 ARCH=arm64 olddefconfig
+          make LLVM=1 ARCH=arm64 modules_prepare -j"$(nproc)"
+
+      - name: Build akd.ko
+        run: |
+          make LLVM=1 ARCH=arm64 -C common M="$GITHUB_WORKSPACE/kernel" modules -j"$(nproc)"
+          ls -l kernel/akd.ko
+          file kernel/akd.ko
+          strings kernel/akd.ko | grep -m1 vermagic || true
+
+      - name: Upload akd.ko
+        uses: actions/upload-artifact@v4
+        with:
+          name: akd-ko-arm64
+          path: |
+            kernel/akd.ko
+            kernel/*.mod.c

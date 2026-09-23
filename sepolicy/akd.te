@@ -1,0 +1,19 @@
+# SELinux policy for the akd character device and test tool.
+# Copy into your device's vendor sepolicy tree, then rebuild.
+
+type akd_device, dev_type;
+
+# Optional vendor CLI domain (not an init daemon)
+type akdctl, domain;
+type akdctl_exec, exec_type, vendor_file_type, file_type;
+
+# Transition when shell runs /vendor/bin/akdctl
+domain_auto_trans(shell, akdctl_exec, akdctl)
+
+allow akdctl akd_device:chr_file { open read write ioctl getattr };
+allow akdctl self:capability { dac_override };
+
+# Eng/userdebug: let adb shell talk to the node directly
+userdebug_or_eng(`
+  allow shell akd_device:chr_file { open read write ioctl getattr };
+')

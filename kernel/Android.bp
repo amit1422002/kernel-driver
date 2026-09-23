@@ -1,0 +1,19 @@
+// Optional Soong bits. Most people build with kernel/Makefile against
+// a configured Android kernel tree (see README).
+//
+// kernel_module rules differ across AOSP / GKI releases; treat this as
+// a starting point and match your platform's existing vendor modules.
+
+filegroup {
+    name: "akd_srcs",
+    srcs: [
+        "akd.c",
+        "akd.h",
+    ],
+}
+
+cc_library_headers {
+    name: "akd_headers",
+    vendor: true,
+    export_include_dirs: ["."],
+}

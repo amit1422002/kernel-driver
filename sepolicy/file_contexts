@@ -1,0 +1,5 @@
+# Device node created by the misc driver
+/dev/akd		u:object_r:akd_device:s0
+
+# Vendor test binary
+/vendor/bin/akdctl	u:object_r:akdctl_exec:s0

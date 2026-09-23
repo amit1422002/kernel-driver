@@ -1,0 +1,7 @@
+cc_binary {
+    name: "akdctl",
+    srcs: ["akdctl.c"],
+    local_include_dirs: ["../kernel"],
+    vendor: true,
+    proprietary: true,
+}

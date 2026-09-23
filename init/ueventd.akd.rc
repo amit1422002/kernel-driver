@@ -1,0 +1,4 @@
+# Permissions for /dev/akd (misc device)
+# Include from your device's ueventd.rc or copy into the vendor ueventd fragment.
+
+/dev/akd    0660    system    system
